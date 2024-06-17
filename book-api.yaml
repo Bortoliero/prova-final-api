@@ -1,0 +1,283 @@
+openapi: 3.0.0
+info:
+  title: API de Cadastro de Livros e Autores
+  description: Esta API permite cadastrar, atualizar, listar e deletar livros e autores.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v2
+    description: Servidor de desenvolvimento
+tags:
+  - name: Books
+    description: Operações relacionadas a livros
+  - name: Authors
+    description: Operações relacionadas a autores
+paths:
+  /authors:
+    get:
+      tags:
+        - Authors
+      summary: Lista todos os autores
+      operationId: listAuthors
+      responses:
+        '200':
+          description: Lista de autores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+    post:
+      tags:
+        - Authors
+      summary: Adiciona um novo autor
+      operationId: createAuthor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAuthor'
+      responses:
+        '201':
+          description: Autor criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+  /authors/{id}:
+    get:
+      tags:
+        - Authors
+      summary: Obtém os detalhes de um autor específico
+      operationId: getAuthorById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do autor
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do autor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Autor não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Authors
+      summary: Deleta um autor específico
+      operationId: deleteAuthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do autor
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Autor deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Não é possível deletar o autor pois ele está relacionado a um livro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Autor não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /books:
+    get:
+      tags:
+        - Books
+      summary: Lista todos os livros
+      operationId: listBooks
+      responses:
+        '200':
+          description: Lista de livros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+    post:
+      tags:
+        - Books
+      summary: Adiciona um novo livro
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewBook'
+      responses:
+        '201':
+          description: Livro criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  /books/{id}:
+    get:
+      tags:
+        - Books
+      summary: Obtém os detalhes de um livro específico
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do livro
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do livro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Livro não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Books
+      summary: Deleta um livro específico
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do livro
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Livro deletado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Livro não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "J.R.R. Tolkien"
+        biography:
+          type: string
+          example: "J.R.R. Tolkien foi um escritor, poeta, filólogo e professor universitário britânico."
+        birthDate:
+          type: string
+          format: date
+          example: "1892-01-03"
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+    NewAuthor:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "J.R.R. Tolkien"
+        biography:
+          type: string
+          example: "J.R.R. Tolkien foi um escritor, poeta, filólogo e professor universitário britânico."
+        birthDate:
+          type: string
+          format: date
+          example: "1892-01-03"
+      required:
+        - name
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "O Senhor dos Anéis"
+        publishedDate:
+          type: string
+          format: date
+          example: "1954-07-29"
+        isbn:
+          type: string
+          example: "978-3-16-148410-0"
+        summary:
+          type: string
+          example: "Uma fantasia épica sobre a luta contra o mal na Terra-média."
+        authorId:
+          type: integer
+          example: 1
+        author:
+          $ref: '#/components/schemas/Author'
+    NewBook:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "O Senhor dos Anéis"
+        publishedDate:
+          type: string
+          format: date
+          example: "1954-07-29"
+        isbn:
+          type: string
+          example: "978-3-16-148410-0"
+        summary:
+          type: string
+          example: "Uma fantasia épica sobre a luta contra o mal na Terra-média."
+        authorId:
+          type: integer
+          example: 1
+      required:
+        - title
+        - authorId
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operação realizada com sucesso."
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Erro ao realizar a operação."
